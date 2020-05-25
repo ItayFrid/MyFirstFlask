@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    An error has occurred
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1 class="text-danger">ERROR</h1>
+    <p>{{ message }}. Please try again.</p>
+</div>
+
+{% endblock %}

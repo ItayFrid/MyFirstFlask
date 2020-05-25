@@ -1,0 +1,16 @@
+{% import "bootstrap/wtf.html" as wtf %}
+<!--{{ wtf.quick_form(userIdForm) }}-->
+<form method="POST" action="/" class="form">
+    {{ userIdForm.csrf_token() }}
+    <div class="form-group mb-2">
+        {{ wtf.form_field(userIdForm.user_id, class='form-control',placeholder='User ID') }}
+        {% if userIdForm.user_id.errors %}
+            <ul class="errors">
+                {% for error in userIdForm.user_id.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn btn-outline-info">Submit</button>
+</form>
