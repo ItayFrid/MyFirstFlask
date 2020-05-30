@@ -1,6 +1,5 @@
 from flask import Flask, render_template, url_for
 from flask_bootstrap import Bootstrap
-from numpy.core.multiarray import ndarray
 from werkzeug.utils import redirect
 
 from Engine.Predictor import Predictor
