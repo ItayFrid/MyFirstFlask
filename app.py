@@ -12,10 +12,11 @@ app = Flask(__name__)
 app.config.from_object(Config)
 Bootstrap(app)
 
-def get_tweets(screen_name=None,user_id=None,numberOfTweets=20  ):
+def get_tweets(screen_name=None,user_id=None,numberOfTweets=20):
     predictor = Predictor()
+    # Connect to Twitter API
     auth = OAuthHandler(app.config['CONSUMER_KEY'],
-                               app.config['CONSUMER_SECRET'])
+                        app.config['CONSUMER_SECRET'])
     auth.set_access_token(app.config['ACCESS_TOKEN'],
                           app.config['ACCESS_TOKEN_SECRET'])
     api = API(auth)
@@ -29,6 +30,7 @@ def get_tweets(screen_name=None,user_id=None,numberOfTweets=20  ):
         tweets = []
         numTweets = sample(range(20), numberOfTweets)
         counter = 0
+        #Getting the tweets ready for proccess
         for tweet in timeline:
             if counter in numTweets:
                 twt = {}
@@ -43,6 +45,7 @@ def get_tweets(screen_name=None,user_id=None,numberOfTweets=20  ):
                 twt['lang']             = tweet.lang
                 tweets.append(twt)
             counter+=1
+        #Getting user details ready for proccess
         userDetails = {}
         userDetails['name']             = user.name
         userDetails['created_at']       = user.created_at
@@ -54,8 +57,8 @@ def get_tweets(screen_name=None,user_id=None,numberOfTweets=20  ):
         userDetails['friends_count']    = user.friends_count
         userDetails['listed_count']     = user.listed_count
         userDetails['description']      = user.description
-        # userDetails['tweets']           = tweets
         userDetails['profile_pic']      = user.profile_image_url_https
+        # predicting
         predictor.setInput([userDetails],tweets)
         predictor.process()
         predictions, threshold, classes, final = predictor.predict()
@@ -64,12 +67,14 @@ def get_tweets(screen_name=None,user_id=None,numberOfTweets=20  ):
         print(e)
         return None
 
+# Utility function
 def process_hashtags(hashtags):
     lst = []
     for h in hashtags:
         lst.append(h['text'])
     return lst
 
+# Utility function
 def process_mentions(mentions):
     lst=[]
     for m in mentions:
@@ -86,6 +91,8 @@ def index():
         return redirect(url_for('user_id', user_id=userIdForm.user_id.data))
     return render_template('index.html',screenForm = screenForm,userIdForm = userIdForm)
 
+# TODO: Add option for user to enter number of tweets
+# TODO: Add option for user to determine if the prediction was right
 @app.route('/screen_name/<screen_name>')
 def screen_name(screen_name):
     predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name)
@@ -93,6 +100,7 @@ def screen_name(screen_name):
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     return render_template('screenNameTweets.html',**locals())
 
+# TODO: add functionality
 @app.route('/user_id/<user_id>')
 def user_id(user_id):
     userDetails = get_tweets(user_id=user_id)
