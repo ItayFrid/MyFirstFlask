@@ -2,14 +2,10 @@
 <form method="POST" action="/" class="form">
     {{ screenForm.csrf_token() }}
     <div class="form-group mb-2">
-        {{ wtf.form_field(screenForm.screen_name, class='form-control',placeholder='Screen Name') }}
-        {% if screenForm.screen_name.errors %}
-            <ul class="errors">
-                {% for error in screenForm.screen_name.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {{ wtf.form_field(screenForm.screen_name, class='form-control',placeholder='Screen name') }}
+    </div>
+        <div class="form-group mb-2">
+        {{ wtf.form_field(screenForm.num_tweets, class='form-control',placeholder='Number of tweets') }}
     </div>
     <button type="submit" class="btn btn-outline-info">Submit</button>
 </form>

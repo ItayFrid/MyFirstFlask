@@ -85,25 +85,32 @@ def process_mentions(mentions):
 def index():
     screenForm = ScreenNameForm()
     userIdForm = UserIdForm()
-    if screenForm.screen_name.data:
-        return redirect(url_for('screen_name', screen_name = screenForm.screen_name.data))
-    if userIdForm.user_id.data:
-        return redirect(url_for('user_id', user_id=userIdForm.user_id.data))
+    if screenForm.validate_on_submit():
+        return redirect(url_for('screen_name', screen_name = screenForm.screen_name.data, num_tweets = screenForm.num_tweets.data))
+    if userIdForm.validate_on_submit():
+        return redirect(url_for('user_id', user_id=userIdForm.user_id.data, num_tweets = userIdForm.num_tweets.data))
     return render_template('index.html',screenForm = screenForm,userIdForm = userIdForm)
 
-# TODO: Add option for user to enter number of tweets
 # TODO: Add option for user to determine if the prediction was right
-@app.route('/screen_name/<screen_name>')
-def screen_name(screen_name):
-    predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name)
+@app.route('/screen_name/<screen_name>/<num_tweets>')
+def screen_name(screen_name,num_tweets):
+    if num_tweets is not None:
+        num = int(num_tweets)
+    else:
+        num = 20
+    predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name,numberOfTweets=num)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     return render_template('screenNameTweets.html',**locals())
 
 # TODO: add functionality
-@app.route('/user_id/<user_id>')
-def user_id(user_id):
-    predictions, threshold, classes, final, userDetails, tweets = get_tweets(user_id=user_id)
+@app.route('/user_id/<user_id>/<num_tweets>')
+def user_id(user_id=None,num_tweets=None):
+    if num_tweets is not None:
+        num = int(num_tweets)
+    else:
+        num = 20
+    predictions, threshold, classes, final, userDetails, tweets = get_tweets(user_id=user_id,numberOfTweets=num)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     return render_template('userIdTweets.html',**locals())
