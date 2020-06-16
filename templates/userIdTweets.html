@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block body %}
-<h3 class="display-4"><img src="{{ userDetails['profile_pic']}}"><b>{{ screen_name }}</b>'s Tweets</h3>
+    <h3 class="display-4"><img src="{{ userDetails['profile_pic']}}" class="rounded"> <b>{{ screen_name }}</b>'s Tweets</h3>
     <div class="container row">
-    {% for tweet in userDetails['tweets'] %}
-        <div class="card alert-{{'success' if probabilities[tweet['id']] > 0.7 else 'danger'}} m-1" style="width: 18rem;">
+    {% for tweet in tweets %}
+        <div class="card alert-{{'danger' if predictions[loop.index-1][0] > threshold else 'success'}} m-1" style="width: 18rem;">
             <div class="card-body">
                 {{ tweet['text'] }}
             </div>
-        <div class="card-footer text-center text-secondary">{{ ("%.2f" % probabilities[tweet['id']]) }}</div>
+        <div class="card-footer text-center text-secondary">{{ predictions[loop.index-1][0] }}</div>
         </div>
     {% endfor %}
     </div>
