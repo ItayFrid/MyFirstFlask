@@ -103,7 +103,6 @@ def screen_name(screen_name,num_tweets):
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     return render_template('screenNameTweets.html',**locals())
 
-# TODO: add functionality
 @app.route('/user_id/<user_id>/<num_tweets>')
 def user_id(user_id=None,num_tweets=None):
     if num_tweets is not None:
