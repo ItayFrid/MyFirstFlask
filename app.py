@@ -64,7 +64,7 @@ def get_tweets(screen_name=None,user_id=None,numberOfTweets=20):
         predictions, threshold, classes, final = predictor.predict()
         return predictions, threshold, classes, final, userDetails, tweets
     except Exception as e:
-        print(e)
+        print('error', e)
         return None
 
 # Utility function
@@ -91,7 +91,6 @@ def index():
         return redirect(url_for('user_id', user_id=userIdForm.user_id.data, num_tweets = userIdForm.num_tweets.data))
     return render_template('index.html',screenForm = screenForm,userIdForm = userIdForm)
 
-# TODO: Add option for user to determine if the prediction was right
 @app.route('/screen_name/<screen_name>/<num_tweets>')
 def screen_name(screen_name,num_tweets):
     if num_tweets is not None:
