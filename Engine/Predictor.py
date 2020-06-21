@@ -7,7 +7,7 @@ import json
 import pathlib
 from tensorflow.keras.models import load_model
 from gensim.models.doc2vec import Doc2Vec
-# from nltk.corpus import stopwords
+from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
@@ -118,8 +118,8 @@ class Predictor:
         corpus = corpus.map(lambda val: list(filter(lambda x: x.isalnum() and x != "https", val)))
 
         # Stopwords removal
-        # stop_words = set(stopwords.words('english'))
-        # corpus = corpus.map(lambda val: list(filter(lambda x: x not in stop_words, val)))
+        stop_words = set(stopwords.words('english'))
+        corpus = corpus.map(lambda val: list(filter(lambda x: x not in stop_words, val)))
 
         # Stemming
         ps = PorterStemmer()
