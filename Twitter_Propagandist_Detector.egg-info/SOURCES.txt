@@ -1,9 +1,0 @@
-setup.py
-Engine/Predictor.py
-Engine/__init__.py
-Twitter_Propagandist_Detector.egg-info/PKG-INFO
-Twitter_Propagandist_Detector.egg-info/SOURCES.txt
-Twitter_Propagandist_Detector.egg-info/dependency_links.txt
-Twitter_Propagandist_Detector.egg-info/not-zip-safe
-Twitter_Propagandist_Detector.egg-info/requires.txt
-Twitter_Propagandist_Detector.egg-info/top_level.txt
