@@ -106,7 +106,10 @@ def screen_name(model,screen_name,num_tweets):
     predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name,numberOfTweets=num,model=model)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
-    return render_template('screenNameTweets.html',**locals())
+    if model == 'Tweets':
+        return render_template('screenNameTweets.html',**locals())
+    else:
+        return render_template('screenNameAccount.html', **locals())
 
 @app.route('/<model>/user_id/<user_id>/<num_tweets>')
 def user_id(model,user_id=None,num_tweets=None):
@@ -117,7 +120,10 @@ def user_id(model,user_id=None,num_tweets=None):
     predictions, threshold, classes, final, userDetails, tweets = get_tweets(user_id=user_id,numberOfTweets=num,model=model)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
-    return render_template('userIdTweets.html',**locals())
+    if model == 'Tweets':
+        return render_template('userIdTweets.html',**locals())
+    else:
+        return render_template('userIdAccount.html', **locals())
 
 @app.route('/error/<message>')
 def error(message):

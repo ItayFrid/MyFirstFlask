@@ -6,7 +6,7 @@
 
 {% block body %}
     <h3 class="display-4">
-        <img src="{{ userDetails['profile_pic']}}" class="rounded"> <b>{{ userDetails['screen_name'] }}</b>
+        <img src="{{ userDetails['profile_pic']}}" class="rounded"> <b>{{ screen_name }}</b>
         -
         <span class="text-{{'success' if final=='Not Propaganda' else 'danger'}}">
             {{ final }}
@@ -33,19 +33,17 @@
     </div>
     <small class="text-center">Classified by {{ model }} model</small>
     <div class="container row">
+
     {% for tweet in tweets %}
         <div class="card alert-info m-1" style="width: 18rem;">
             <div class="card-body">
                 {{ tweet['text'] }}
             </div>
             <div class="card-footer text-center text-secondary">
-                <!--{{ predictions[loop.index-1][0] }}-->
                 <div class="row">
                     <div class="col"><small><i class="fas fa-retweet"></i> {{ tweet['retweet_count'] }}</small></div>
                     <div class="col"><small><i class="far fa-heart"></i> {{ tweet['favorite_count'] }}</small></div>
-                    <div class="col text-{{ 'danger' if predictions[loop.index-1][0] > threshold else 'success' }}"><small><strong>{{ predictions[loop.index-1][0] }}</strong></small></div>
                 </div>
-
             </div>
         </div>
     {% endfor %}
