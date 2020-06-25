@@ -3,7 +3,7 @@ import numpy as np
 import os
 import json
 import pathlib
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from gensim.models.doc2vec import Doc2Vec
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
@@ -16,19 +16,19 @@ class Predictor:
 
     # Class constructor loads Doc2Vec model, NN model, min-max values for processing, and threshold for predicting
     def __init__(self, classifier):
-
         # Determining type of classification
         self.classifier = classifier
-
+        self.NN_MODEL_PATH = ''
+        self.TEXT_MODEL_PATH = ''
         # Setting paths for models
-        path = pathlib.Path(os.getcwd()).parent / 'Engine'
+        path = pathlib.Path(os.getcwd()) / 'Engine'
 
         if self.classifier == 'Tweets':
             self.NN_MODEL_PATH = str(path / 'TC_model.h5')
             self.TEXT_MODEL_PATH = str(path / 'TC_text_model')
-        elif self.classifier == 'Accounts':
+        elif self.classifier == 'Account':
             self.NN_MODEL_PATH = str(path / 'AC_model.h5')
-            self.TEXT_MODEL_PATH = str(path / 'AC_new_text_model')
+            self.TEXT_MODEL_PATH = str(path / 'AC_text_model')
 
         # Setting class variables
         self.user_info, self.tweet_info = None, None

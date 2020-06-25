@@ -12,8 +12,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 Bootstrap(app)
 
-def get_tweets(screen_name=None,user_id=None,numberOfTweets=20,model='Tweets'):
-    predictor = Predictor()
+def get_tweets(screen_name=None,user_id=None,numberOfTweets=20,classifier='Tweets'):
+    predictor = Predictor(classifier = classifier)
     # Connect to Twitter API
     auth = OAuthHandler(app.config['CONSUMER_KEY'],
                         app.config['CONSUMER_SECRET'])
@@ -103,7 +103,7 @@ def screen_name(model,screen_name,num_tweets):
         num = int(num_tweets)
     else:
         num = 20
-    predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name,numberOfTweets=num,model=model)
+    predictions, threshold, classes, final, userDetails, tweets = get_tweets(screen_name=screen_name,numberOfTweets=num,classifier=model)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     if model == 'Tweets':
@@ -117,7 +117,7 @@ def user_id(model,user_id=None,num_tweets=None):
         num = int(num_tweets)
     else:
         num = 20
-    predictions, threshold, classes, final, userDetails, tweets = get_tweets(user_id=user_id,numberOfTweets=num,model=model)
+    predictions, threshold, classes, final, userDetails, tweets = get_tweets(user_id=user_id,numberOfTweets=num,classifier=model)
     if userDetails is None or len(userDetails) == 0:
         return redirect(url_for('error',message = 'User or tweets does not exists'))
     if model == 'Tweets':
