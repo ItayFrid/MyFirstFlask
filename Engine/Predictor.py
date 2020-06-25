@@ -1,30 +1,34 @@
-from random import sample
-
 import pandas as pd
 import numpy as np
 import os
 import json
 import pathlib
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 from gensim.models.doc2vec import Doc2Vec
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 
+
+
 # This class is the deployment of the classification model
-from tweepy import OAuthHandler, API
-
-
 class Predictor:
 
     # Class constructor loads Doc2Vec model, NN model, min-max values for processing, and threshold for predicting
-    def __init__(self):
+    def __init__(self, classifier):
+
+        # Determining type of classification
+        self.classifier = classifier
 
         # Setting paths for models
-        # path = pathlib.Path(os.getcwd()).parent / 'Engine'
-        path = pathlib.Path(os.getcwd()) / 'Engine'
-        self.NN_MODEL_PATH = str(path / 'model.h5')
-        self.TEXT_MODEL_PATH = str(path / 'new_text_model')
+        path = pathlib.Path(os.getcwd()).parent / 'Engine'
+
+        if self.classifier == 'Tweets':
+            self.NN_MODEL_PATH = str(path / 'TC_model.h5')
+            self.TEXT_MODEL_PATH = str(path / 'TC_text_model')
+        elif self.classifier == 'Accounts':
+            self.NN_MODEL_PATH = str(path / 'AC_model.h5')
+            self.TEXT_MODEL_PATH = str(path / 'AC_new_text_model')
 
         # Setting class variables
         self.user_info, self.tweet_info = None, None
@@ -61,6 +65,7 @@ class Predictor:
 
         # Activating model, returns numpy array where each value is between 0-1
         predictions = self.nn_model.predict([self.user_info, self.tweet_info])
+
         # Classifying according to threshold
         classes = np.where(predictions <= self.threshold, 0, 1)
 
@@ -99,16 +104,21 @@ class Predictor:
         self.user_info['listed_count'] = self.user_info['listed_count'].map(
             lambda x: min_max_normalize(x, 'listed_count'))
 
-        # Replicating user meta data vector to be the same amount as the tweets
-        self.user_info = pd.concat([self.user_info] * len(self.tweet_info))
+        if self.classifier == 'Tweets':
+            # Replicating user meta data vector to be the same amount as the tweets
+            self.user_info = pd.concat([self.user_info] * len(self.tweet_info))
 
         # Converting to numpy array
         self.user_info = self.user_info.to_numpy()
         print("[INFO] Done!")
 
+
+
     # This method processes tweet text data for classification
     def processTextData(self):
         print("[INFO] Processing tweet text data...")
+        if self.classifier == 'Accounts':
+            self.tweet_info['text'] = self.tweet_info['text'].apply(lambda x: "%s" % ' '.join(x))
         corpus = self.tweet_info['text']
         # Low-casing and tokenizing words
         corpus = corpus.map(lambda x: x.lower())
@@ -142,3 +152,6 @@ class Predictor:
                                                                       self.tweet_info.shape[1], -1))
 
         print("[INFO] Text processing complete!")
+
+
+
