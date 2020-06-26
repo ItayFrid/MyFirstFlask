@@ -51,6 +51,7 @@ class Predictor:
         self.tweet_info = pd.DataFrame(tweet_info)
 
 
+
     # This method performs processing to data before class prediction
     # calls text processing and user meta processing separately
     # must feed input before calling this method
@@ -62,10 +63,11 @@ class Predictor:
     # must feed data and process before calling this method
     def predict(self):
         print("[INFO] Making predictions...")
-
+        print(self.user_info.shape)
+        print(self.tweet_info.shape)
         # Activating model, returns numpy array where each value is between 0-1
         predictions = self.nn_model.predict([self.user_info, self.tweet_info])
-
+        print(predictions)
         # Classifying according to threshold
         classes = np.where(predictions <= self.threshold, 0, 1)
 
@@ -117,9 +119,13 @@ class Predictor:
     # This method processes tweet text data for classification
     def processTextData(self):
         print("[INFO] Processing tweet text data...")
-        if self.classifier == 'Accounts':
-            self.tweet_info['text'] = self.tweet_info['text'].apply(lambda x: "%s" % ' '.join(x))
-        corpus = self.tweet_info['text']
+        if self.classifier == 'Account':
+            corpus = ' '.join(self.tweet_info['text'].tolist())
+            corpus = pd.Series(corpus)
+
+        elif self.classifier == 'Tweets':
+            corpus = self.tweet_info['text']
+
         # Low-casing and tokenizing words
         corpus = corpus.map(lambda x: x.lower())
         corpus = corpus.map(lambda x: word_tokenize(x))
@@ -140,16 +146,24 @@ class Predictor:
         print("[INFO] Activating text model...")
         corpus = corpus.map(lambda x: self.text_model.infer_vector(x))
         print("[INFO] Vectors generated!")
-        self.tweet_info['text'] = corpus
 
-        # Reforming text vectors shape to match model's LSTM layer
-        self.tweet_info = self.tweet_info['text'].to_numpy()
-        vectors = []
-        for vec in self.tweet_info:
-            vectors.append(vec)
-        self.tweet_info = np.array(vectors)
-        self.tweet_info = np.reshape(self.tweet_info, newshape=(self.tweet_info.shape[0],
-                                                                      self.tweet_info.shape[1], -1))
+        if self.classifier == 'Tweets':
+            self.tweet_info['text'] = corpus
+
+            # Reforming text vectors shape to match model's LSTM layer
+            self.tweet_info = self.tweet_info['text'].to_numpy()
+            vectors = []
+            for vec in self.tweet_info:
+                vectors.append(vec)
+            self.tweet_info = np.array(vectors)
+            self.tweet_info = np.reshape(self.tweet_info, newshape=(self.tweet_info.shape[0],
+                                                                    self.tweet_info.shape[1], -1))
+
+        elif self.classifier == 'Account':
+            self.tweet_info = corpus.to_numpy()[0]
+            self.tweet_info = np.reshape(self.tweet_info, newshape=(1, 50, -1))
+
+
 
         print("[INFO] Text processing complete!")
 
